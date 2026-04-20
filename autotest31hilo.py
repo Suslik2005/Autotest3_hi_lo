@@ -1,7 +1,7 @@
 import time
 import xml.etree.ElementTree as ET
 from rabota_S_excel import XlsxTagReader
-from Trier import ModbusData
+from zapis_i_vivod import ModbusData
 
 mb = ModbusData("192.168.53.164")
 
