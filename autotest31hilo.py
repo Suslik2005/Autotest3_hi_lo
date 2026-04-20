@@ -145,7 +145,7 @@ for elem in root.iter():
     has_hi = 'hi' in attrib
     has_lo = 'lo' in attrib
 
-    if (has_hi or has_lo) and (attrib.get('tag', 'N/A')[-2] != "_" or attrib.get('tag', 'N/A')[-2:] == "_1"):
+    if (has_hi or has_lo) and ((attrib.get('tag', 'N/A')[-2] != "_" and attrib.get('tag', 'N/A')[-3] != "_")  or attrib.get('tag', 'N/A')[-2:] == "_1"):
         filtered_elements.append(elem)
         main_value = attrib.get('tag', 'N/A')
 
