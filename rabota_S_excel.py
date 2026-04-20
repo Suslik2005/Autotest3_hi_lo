@@ -5,6 +5,7 @@ from typing import Optional, List
 class XlsxTagReader:
     """
     Поиск по тегу в 7-м столбце.
+    Ищет либо точное совпадение, либо тег + _1
     Возвращает массив [адрес (3-й столбец), тип (4-й столбец)].
     """
 
@@ -22,11 +23,21 @@ class XlsxTagReader:
     def find_by_tag(self, tag: str) -> Optional[List[str]]:
         """
         Ищет строку по тегу в 7-м столбце.
+        Сначала ищет точное совпадение.
+        Если не найдено, ищет тег + _1
 
         :param tag: тег для поиска
         :return: массив [адрес, тип] или None
         """
-        row = self.tag_index.get(str(tag).strip())
+        tag_clean = str(tag).strip()
+
+        # Сначала ищем точное совпадение
+        row = self.tag_index.get(tag_clean)
+
+        # Если не нашли, ищем с _1
+        if row is None:
+            row = self.tag_index.get(tag_clean + "_1")
+
         if row is None:
             return None
 
@@ -44,8 +55,8 @@ class XlsxTagReader:
 
 # Пример
 reader = XlsxTagReader("Копия ModbusMapReport (1).xlsx")
-result = reader.find_by_tag("P_EUMAX_PROVER_1")
+result = reader.find_by_tag("P_EUMAX_LINE")
 
 if result:
-    print(result)  # ['значение адреса', 'значение типа']
+    print(result)  # Найдет P_EUMAX_LINE или P_EUMAX_LINE_1
 reader.close()
