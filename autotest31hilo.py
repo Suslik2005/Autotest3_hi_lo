@@ -1,7 +1,7 @@
 import time
 import xml.etree.ElementTree as ET
 from rabota_S_excel import XlsxTagReader
-from zapis_i_vivod import ModbusData
+from Trier import ModbusData
 
 mb = ModbusData("192.168.53.164")
 
@@ -41,6 +41,7 @@ def process_address(mb, address: int, var_type: str, value):
         time.sleep(2)
         a = mb.read_holding_registers(address, 1)
         is_success = (int(value) == int(a))
+        print(f"  Ожидалось: {value}, Получено: {a}")
         return is_success
 
     elif var_type == 'int':
@@ -48,6 +49,7 @@ def process_address(mb, address: int, var_type: str, value):
         time.sleep(2)
         a = mb.read_holding_registers(address, 1)
         is_success = (int(value) == int(a))
+        print(f"  Ожидалось: {value}, Получено: {a}")
         return is_success
 
     elif var_type == 'float':
@@ -66,6 +68,7 @@ def process_address(mb, address: int, var_type: str, value):
         time.sleep(2)
         a = mb.read_long(address)
         is_success = (int(value) == int(a))
+        print(f"  Ожидалось: {value}, Получено: {a}")
         return is_success
 
     elif var_type == 'double':
@@ -142,7 +145,7 @@ for elem in root.iter():
     has_hi = 'hi' in attrib
     has_lo = 'lo' in attrib
 
-    if (has_hi or has_lo) and attrib.get('tag', 'N/A')[-2:] == "_1":
+    if (has_hi or has_lo) and (attrib.get('tag', 'N/A')[-2] != "_" or attrib.get('tag', 'N/A')[-2:] == "_1"):
         filtered_elements.append(elem)
         main_value = attrib.get('tag', 'N/A')
 
@@ -207,8 +210,10 @@ for elem in root.iter():
                     print(f"  >>> ЗНАЧЕНИЯ НЕ СОВПАДАЮТ для hi, ОШИБКА ЗАПИСИ, WRONG")
                     hi = False
                 time.sleep(2)
-
-                success = process_address(mb, int(address) - 1, var_type, str(float(hi_value) + 1))
+                if var_type == "float" and var_type == 'double':
+                    success = process_address(mb, int(address) - 1, var_type, str(float(hi_value) + 1))
+                else:
+                    success = process_address(mb, int(address) - 1, var_type, str(int(hi_value) + 1))
 
                 if success:
                     print(f"  >>> ЗНАЧЕНИЕ Записано за границей!!!!!, WRONG")
