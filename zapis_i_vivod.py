@@ -94,10 +94,10 @@ class ModbusData:
     def write_int(self, address, value):
         if value < 0:
             value = 0x100000000 + value
-        self._write_two_registers(address, value)
+        self._write_one_register(address, value)
 
     def read_int(self, address):
-        value = self._read_two_registers(address)
+        value = self._read_one_register(address)
         if value & 0x80000000:
             value = value - 0x100000000
         return value
